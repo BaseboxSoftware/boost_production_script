@@ -156,7 +156,7 @@ def assert_on_gallery_content(expected, gallery_title_field, gallery_desc_field)
   puts "Asserting on gallery content"
 
   @wait.until {
-    @driver.iFrame_gallery_items.first.displayed?
+    @driver.iFrame_gallery_items.length > 0
   }
 
   gallery_items = @driver.iFrame_gallery_items

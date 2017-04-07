@@ -2,8 +2,12 @@ require "selenium/webdriver"
 
 module TestingBotDriver
   class << self
-    def endpoint
-      "http://playground.phatmagnet.com/boost/"
+    def boost_endpoint
+      "http://192.168.0.104/boost"
+    end
+
+    def specx_client_endpoint(ip)
+      "http://#{ip}/admin/login"
     end
 
     def new_driver

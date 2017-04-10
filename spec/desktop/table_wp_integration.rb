@@ -39,7 +39,5 @@ describe "SpecX" do
     sleep 3
 
     assert_on_iFrame_content_and_modals(gallery_rows_to_check, section_to_test)
-
-    puts "Successful Test"
   end
 end

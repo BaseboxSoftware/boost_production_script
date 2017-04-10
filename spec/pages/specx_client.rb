@@ -85,11 +85,12 @@ module SpecxClient
       # Check that all the rows to assert against are visible, otherwise scroll to get more rows
       diff = expected.keys - visible_keys
 
+      puts 'Searching table for rows to assert against'
+      puts
+
       # Keep getting rows untill all the rows to assert against are visible
       # If stuck in infinite loop, then increase sleep after import
       while diff.any?
-        puts 'Finding rows to assert against'
-        puts diff
         scroll_to_expand_table
         sleep 1
 
@@ -245,19 +246,31 @@ module SpecxClient
     def edit_cell(row_item, col_obj, row_identifier)
       datatype = col_obj[:datatype]
       col_title = col_obj[:title].to_sym
+
+      puts "Editing ID: #{row_identifier}"
+      puts "Changing value in #{col_obj[:title]}"
+      puts "From: #{row_item[:value]}"
+
       case datatype
       when 'text' then
         row_item[:value_field].clear
         new_val = @exisisting_text_attribution_values_obj[col_title].sample
         row_item[:value_field].send_keys new_val
+        puts "To: #{new_val}"
+        puts
         new_val
       when 'boolean' then
         self.execute_script("arguments[0].click(true);", row_item[:value_field])
-        row_item[:value] == 'true' ? 'false' : 'true' # Return the toggled value
+        new_val = row_item[:value] == 'true' ? 'false' : 'true' # Return the toggled value
+        puts "To: #{new_val}"
+        puts
+        new_val
       when 'number' then
         row_item[:value_field].clear
         new_num = rand(1..5).to_s
         row_item[:value_field].send_keys new_num
+        puts "To: #{new_num}"
+        puts
         new_num
       else
         raise "Editing on this datatype not yet supported"
@@ -287,7 +300,6 @@ module SpecxClient
           exisiting_text_attribution_values_obj[attribute.to_sym] = response["values"]
         end
       end
-
       exisiting_text_attribution_values_obj
     end
 

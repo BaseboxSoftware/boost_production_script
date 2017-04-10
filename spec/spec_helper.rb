@@ -77,7 +77,7 @@ def get_obj_to_assert_on
       navbar_link: 'nav-menu-item-3272',
       wordpress_gallery_title_field: "Category 3",
       wordpress_gallery_desc_field: "Site Description"
-    },
+    }
   ].sample
 end
 

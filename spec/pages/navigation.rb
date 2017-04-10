@@ -1,7 +1,7 @@
 module Navigation
   class ::Selenium::WebDriver::Driver
-    def classes_link
-      self.find_element(:id, 'nav-menu-item-3271')
+    def navbar_link(link_id)
+      self.find_element(:id, link_id)
     end
   end
 end

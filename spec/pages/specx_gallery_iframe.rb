@@ -9,11 +9,11 @@ module SpecxGalleryIframe
     end
 
     def iFrame_modal_headers(index)
-      self.iFrame_modals[index].find_element(:css, '.modal-header > b').attribute('innerHTML')
+      CGI::unescapeHTML(self.iFrame_modals[index].find_element(:css, '.modal-header > b').attribute('innerHTML'))
     end
 
     def iFrame_modal_bodies(index)
-      self.iFrame_modals[index].find_element(:css, '.modal-body').attribute('innerHTML')
+      CGI::unescapeHTML(self.iFrame_modals[index].find_element(:css, '.modal-body').attribute('innerHTML'))
     end
 
     def iFrame_gallery_items
@@ -29,7 +29,7 @@ module SpecxGalleryIframe
     end
 
     def wordpress_modal_body
-      self.find_element(:css, '#modal-replace > .modal-content > .modal-body').attribute('innerHTML')
+      CGI::unescapeHTML(self.find_element(:css, '#modal-replace > .modal-content > .modal-body').attribute('innerHTML'))
     end
 
     def close_wordpress_modal

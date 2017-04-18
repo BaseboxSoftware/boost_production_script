@@ -4,7 +4,7 @@ describe "SpecX" do
 
   it "can make random edits to a specx table, import and reflect changes on boost wordpress" do
 
-    section_to_test = get_obj_to_assert_on
+    table_to_test = ['Mindbody Web Management', 'Jackrabbit Web Management'].sample
 
     @driver.navigate.to TestingBotDriver.specx_client_endpoint(SpecxApi.basebox_ip)
 
@@ -15,29 +15,48 @@ describe "SpecX" do
     # Window handle for specx client
     specx_window_handle = @driver.window_handles.first
 
-    @driver.open_specx_table_window(section_to_test[:table_name])
+    # @driver.open_specx_table_window(section_to_test[:table_name])
+    table_window_handle = @driver.open_specx_table_window(table_to_test)
 
-    expected = @driver.make_random_specx_table_edits(section_to_test)
+    table = @driver.randomize_table_actions
+    expected = table.get_expected_obj
 
-    rows = @driver.get_rows_to_assert_against(expected)
+    rows = table.get_rows_to_assert_against(expected)
 
     puts "Asserting on imports"
     assert_on_expected_obj(expected, rows) # Test that after import all rows of table are correct
 
-    gallery_rows_to_check = @driver.get_rows_for_gallery(section_to_test)
+    sections_to_test = []
+    case table_to_test
+    when 'Mindbody Web Management'
+      sections_to_test = mindbody_sections_obj
+    when 'Jackrabbit Web Management'
+      sections_to_test = jackrabbit_sections_obj
+    end
 
-    @driver.close_specx_table_window(specx_window_handle)
-
+    # Open up the Bost site
+    @driver.execute_script( "window.open()" )
+    @driver.switch_to.window(@driver.window_handles.last)
     @driver.navigate.to TestingBotDriver.boost_endpoint
 
-    @wait.until {
-      element = @driver.navbar_link(section_to_test[:navbar_link])
-      element if element.displayed?
-    }.click
+    sections_to_test.each do |section|
+      # Switch back to the table and get the rows for the wp section to test
+      @driver.switch_to.window(table_window_handle)
+      gallery_rows_to_check = table.get_rows_for_gallery(section)
 
-    # Sleeping to wait on scrolling event
-    sleep 3
+      # Switch back to the Boost site
+      @driver.switch_to.window(@driver.window_handles.last)
 
-    assert_on_iFrame_content_and_modals(gallery_rows_to_check, section_to_test)
+      @wait.until {
+        element = @driver.navbar_link(section[:navbar_link])
+        element if element.displayed?
+      }.click
+
+      # Sleeping to wait on scrolling event
+      sleep 3
+
+      assert_on_iFrame_content_and_modals(gallery_rows_to_check, section)
+    end
+
   end
 end

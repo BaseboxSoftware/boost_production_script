@@ -1,12 +1,12 @@
 require "rspec"
 require_relative "testing_bot_driver"
 require "pry"
-require "logger"
 
 RSpec.configure do |config|
   config.around(:all) do |regression_test|
     Dir[File.dirname(__FILE__) + "/pages/*.rb"].each {|file| require file }
     Dir[File.dirname(__FILE__) + "/clients/*.rb"].each {|file| require file }
+    Dir[File.dirname(__FILE__) + "/helpers/*.rb"].each {|file| require file }
 
     @driver = TestingBotDriver.new_driver
     @wait = Selenium::WebDriver::Wait.new(:timeout => 15)
@@ -22,7 +22,7 @@ RSpec.configure do |config|
   end
 end
 
-def get_obj_to_assert_on
+def mindbody_sections_obj
   [
     {
       table_name: 'Mindbody Web Management',
@@ -41,7 +41,12 @@ def get_obj_to_assert_on
       navbar_link: 'nav-menu-item-3271',
       wordpress_gallery_title_field: "Class Name",
       wordpress_gallery_desc_field: "Site Description"
-    },
+    }
+  ]
+end
+
+def jackrabbit_sections_obj
+  [
     {
       table_name: 'Jackrabbit Web Management',
       column: 'Category 2',
@@ -77,23 +82,25 @@ def get_obj_to_assert_on
       navbar_link: 'nav-menu-item-3272',
       wordpress_gallery_title_field: "Category 3",
       wordpress_gallery_desc_field: "Site Description"
+    },
+    {
+      table_name: 'Jackrabbit Web Management',
+      column: 'Category 2',
+      value: 'Camp',
+      iFrame_id: 'camp-frame',
+      navbar_link: 'nav-menu-item-3272',
+      wordpress_gallery_title_field: "Category 3",
+      wordpress_gallery_desc_field: "Site Description"
     }
-  ].sample
+  ]
 end
+
 
 # Assert that after importing from specx table, and refreshing, all editied rows
 # have expected value
 def assert_on_expected_obj(expected, rows)
   rows.each do |row|
-    if row.values.first != expected[row.keys.first]
-      if row.values.first.except(:"Site Description") == expected[row.keys.first].except(:"Site Description")
-        puts 'Skipping Assertion' # Ignore bug for now
-      else
-        expect(expected[row.keys.first]).to eq(row.values.first)
-      end
-    else
-      expect(expected[row.keys.first]).to eq(row.values.first)
-    end
+    expect(expected[row.keys.first]).to eq(row.values.first)
   end
 end
 
